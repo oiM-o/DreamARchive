@@ -68,7 +68,7 @@ fun TalkScreen(
                 trailingIcon = {
                     IconButton(
                         onClick = {
-                            talkViewModel.addMessage(inputText, true)
+                            talkViewModel.sendMessageToGpt(inputText)
                             inputText = "" // 送信後にテキストフィールドをクリア
                         },
                     ) {
