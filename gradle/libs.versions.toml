@@ -11,6 +11,7 @@ activityCompose = "1.9.1"
 composeBom = "2024.06.00"
 retrofit = "2.9.0"
 converter-gson = "2.9.0"
+dotenv-kotlin = "6.2.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,6 +31,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 squareup-retrofit2-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 squareup-retrofit2-converter-gson = { group = 'com.squareup.retrofit2', name = 'converter-gson', version.ref = 'converter-gson' }
+github-cdimascio-dotenv-kotlin = { group = 'io.github.cdimascio', name = 'dotenv-kotlin', version.ref = 'dotenv-kotlin' }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
