@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chatwithgpt.BuildConfig
 import com.example.chatwithgpt.model.GptMessage
 import com.example.chatwithgpt.model.GptRequest
 import com.example.chatwithgpt.network.OpenAIApiService
@@ -31,6 +32,9 @@ class TalkViewModel: ViewModel() {
 
     private val openAIApi = retrofit.create(OpenAIApiService::class.java)
 
+    // BuildConfig 経由で API キーを取得
+    private val apiKey = BuildConfig.OPENAI_API_KEY
+
     fun addMessage(message: String, isUser: Boolean){
         _messages.value = _messages.value + (message to isUser)
     }
@@ -46,7 +50,9 @@ class TalkViewModel: ViewModel() {
                     )
                 )
 
-                val response = openAIApi.sendMessage(request).awaitResponse()
+                // APIキーを"Bearer "と一緒にAuthorizationヘッダーに渡す
+                val authHeader = "Bearer $apiKey"
+                val response = openAIApi.sendMessage(authHeader, request).awaitResponse()
 
                 if (response.isSuccessful) {
                     val gptResponse = response.body()
@@ -56,7 +62,8 @@ class TalkViewModel: ViewModel() {
                         addMessage(it, isUser = false)
                     }
                 } else {
-                    addMessage("Error: ${response.code()}", isUser = false)
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    addMessage("Error: ${response.code()} - $errorBody", isUser = false)
                 }
             } catch (e: Exception) {
                 addMessage("Failed to communicate with GPT: ${e.message}", isUser = false)

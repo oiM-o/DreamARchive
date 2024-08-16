@@ -9,9 +9,10 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface OpenAIApiService {
-    @Headers(
-        "Authorization: Bearer YOUR API KEY",
-        "Content-Type: application/json")
+    @Headers("Content-Type: application/json")
     @POST("v1/chat/completions")
-    fun sendMessage(@Body request: GptRequest): Call<GptResponse>
+    fun sendMessage(
+        @Header("Authorization") authHeader: String, // Authorizationヘッダーを動的に渡す
+        @Body request: GptRequest
+    ): Call<GptResponse>
 }

@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -18,7 +21,16 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // local.propertiesからAPIキーを読み込む
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localProperties.load(FileInputStream(localPropertiesFile))
+        }
+        buildConfigField("String", "OPENAI_API_KEY", "\"${localProperties.getProperty("OPENAI_API_KEY")}\"")
     }
+
 
     buildTypes {
         release {
@@ -38,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true // ここで buildConfig 機能を有効にする
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
