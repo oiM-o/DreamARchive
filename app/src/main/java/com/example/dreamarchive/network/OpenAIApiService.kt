@@ -1,7 +1,7 @@
-package com.example.chatwithgpt.network
+package com.example.dreamarchive.network
 
-import com.example.chatwithgpt.model.GptRequest
-import com.example.chatwithgpt.model.GptResponse
+import com.example.dreamarchive.model.GptRequest
+import com.example.dreamarchive.model.GptResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Header

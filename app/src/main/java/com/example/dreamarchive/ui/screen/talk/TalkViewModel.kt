@@ -1,13 +1,11 @@
-package com.example.chatwithgpt.ui.screen.talk
+package com.example.dreamarchive.ui.screen.talk
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chatwithgpt.BuildConfig
-import com.example.chatwithgpt.model.GptMessage
-import com.example.chatwithgpt.model.GptRequest
-import com.example.chatwithgpt.network.OpenAIApiService
+import com.example.dreamarchive.BuildConfig
+import com.example.dreamarchive.model.GptMessage
+import com.example.dreamarchive.model.GptRequest
+import com.example.dreamarchive.network.OpenAIApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +13,6 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
-import io.github.cdimascio.dotenv.dotenv
 
 
 class TalkViewModel: ViewModel() {

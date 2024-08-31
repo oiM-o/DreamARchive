@@ -1,4 +1,4 @@
-package com.example.chatwithgpt.ui.theme
+package com.example.dreamarchive.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

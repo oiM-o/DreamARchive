@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ChatWithGPT"
+rootProject.name = "DreamARchive"
 include(":app")

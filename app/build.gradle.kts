@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.chatwithgpt"
+    namespace = "com.example.dreamarchive"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.chatwithgpt"
+        applicationId = "com.example.dreamarchive"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

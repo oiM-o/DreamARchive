@@ -1,4 +1,4 @@
-package com.example.chatwithgpt
+package com.example.dreamarchive
 
 import org.junit.Test
 
