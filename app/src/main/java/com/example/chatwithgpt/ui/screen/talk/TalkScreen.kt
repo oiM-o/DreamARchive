@@ -1,5 +1,6 @@
 package com.example.chatwithgpt.ui.screen.talk
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -62,9 +63,24 @@ fun TalkScreen(
             )
         },
         bottomBar = {
+
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { /*TODO*/ }
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "New_Talk")
+            }
+        }
+    ) { innerpadding ->
+        Column(
+            modifier =
+                Modifier.fillMaxWidth().padding(innerpadding)
+        ) {
             OutlinedTextField(
                 value = inputText,
                 onValueChange = { newText -> inputText = newText },
+                singleLine = false,
                 trailingIcon = {
                     IconButton(
                         onClick = {
@@ -79,25 +95,21 @@ fun TalkScreen(
                     }
                 },
                 label = { Text(text = "Type your message...") },
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /*TODO*/ }
+            LazyColumn(
+                contentPadding = innerpadding,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "New_Talk")
+                items(messages) { message ->
+                    Text(text = message.first)
+                }
             }
+
         }
-    ) { innerpadding ->
-        LazyColumn(
-            contentPadding = innerpadding,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            items(messages) { message ->
-                Text(text = message.first)
-            }
-        }
+
 
     }
 }
