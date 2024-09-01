@@ -43,6 +43,7 @@ class TalkViewModel: ViewModel() {
             try {
                 val request = GptRequest(
                     messages = listOf(
+                        GptMessage("system", "あなたは作家です。今からユーザーが今朝見た夢の内容を入力するので、その続きの物語を140字程度で考えてください。必ず140字程度という文字制限を守ってください。"),
                         GptMessage("user", inputText)
                     )
                 )
