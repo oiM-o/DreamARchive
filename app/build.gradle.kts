@@ -78,6 +78,7 @@ dependencies {
     //converter
     implementation(libs.squareup.retrofit2.converter.gson)
     implementation(libs.github.cdimascio.dotenv.kotlin)
+    implementation(libs.androidx.navigation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

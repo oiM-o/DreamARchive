@@ -27,12 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TalkScreen(
+        navController: NavController,
         talkViewModel: TalkViewModel = viewModel()
 ) {
 
@@ -49,7 +51,7 @@ fun TalkScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { /*TODO*/ }
+                        onClick = { navController.navigate("settingscreen") }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
@@ -59,20 +61,12 @@ fun TalkScreen(
                 }
             )
         },
-        bottomBar = {
-
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /*TODO*/ }
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "New_Talk")
-            }
-        }
     ) { innerpadding ->
         Column(
             modifier =
-                Modifier.fillMaxWidth().padding(innerpadding)
+            Modifier
+                .fillMaxWidth()
+                .padding(innerpadding)
         ) {
             OutlinedTextField(
                 value = inputText,
@@ -114,5 +108,6 @@ fun TalkScreen(
 @Preview
 @Composable
 fun TalkScreenPreview(){
-    TalkScreen()
+    val navController = rememberNavController() //NavControllerのモックを作成
+    TalkScreen(navController)
 }
