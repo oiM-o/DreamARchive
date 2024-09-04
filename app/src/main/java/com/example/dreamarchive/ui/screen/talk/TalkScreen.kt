@@ -1,19 +1,23 @@
 package com.example.dreamarchive.ui.screen.talk
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -60,6 +64,35 @@ fun TalkScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            NavigationBar {
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    IconButton(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit"
+                            )
+
+                        }
+
+                    IconButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = "Star"
+                            )
+                        }
+
+                }
+            }
         },
     ) { innerpadding ->
         Column(
