@@ -81,6 +81,10 @@ dependencies {
     implementation(libs.github.cdimascio.dotenv.kotlin)
     //navigation-compose
     implementation(libs.androidx.navigation)
+    //SceneView
+    implementation(libs.sceneview)
+    //ARSceneView
+    implementation(libs.arsceneview)
     testImplementation(libs.junit)
     //paparazzi
     testImplementation(libs.app.paparazzi)

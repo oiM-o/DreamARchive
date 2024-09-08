@@ -94,7 +94,15 @@ fun TalkScreen(
                 }
             }
         },
-    ) { innerpadding ->
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate("ar_screen") }
+            ) {
+                Text("Go to AR Screen")
+            }
+        },
+    )
+    { innerpadding ->
         Column(
             modifier =
             Modifier
