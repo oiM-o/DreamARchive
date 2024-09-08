@@ -50,7 +50,7 @@ fun TalkScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "TalkRoom"
+                        "DreamARchive"
                     )
                 },
                 navigationIcon = {
@@ -71,7 +71,7 @@ fun TalkScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {navController.navigate("talkscreen")},
                         modifier = Modifier.weight(1f)
                     ) {
                         Icon(
@@ -82,7 +82,7 @@ fun TalkScreen(
                         }
 
                     IconButton(
-                            onClick = { /*TODO*/ },
+                            onClick = {navController.navigate("archivescreen")},
                             modifier = Modifier.weight(1f)
                         ) {
                             Icon(
