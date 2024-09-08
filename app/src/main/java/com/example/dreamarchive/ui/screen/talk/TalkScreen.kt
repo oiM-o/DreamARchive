@@ -96,7 +96,7 @@ fun TalkScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate("ar_screen") }
+                onClick = { navController.navigate("arscreen") }
             ) {
                 Text("Go to AR Screen")
             }
