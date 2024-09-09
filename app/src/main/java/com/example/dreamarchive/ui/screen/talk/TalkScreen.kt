@@ -33,13 +33,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.dreamarchive.ui.screen.setting.SettingViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TalkScreen(
-        navController: NavController,
-        talkViewModel: TalkViewModel = viewModel()
+    navController: NavController,
+    settingViewModel: SettingViewModel = viewModel(),  // 設定のViewModelを取得
+    talkViewModel: TalkViewModel = viewModel(factory = TalkViewModelFactory(settingViewModel)) // TalkViewModelに設定のViewModelを渡す
 ) {
 
     val messages by talkViewModel.messages.collectAsState()
