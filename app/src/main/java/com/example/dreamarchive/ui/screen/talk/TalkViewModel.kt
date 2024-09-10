@@ -1,11 +1,13 @@
 package com.example.dreamarchive.ui.screen.talk
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.dreamarchive.BuildConfig
 import com.example.dreamarchive.model.GptMessage
 import com.example.dreamarchive.model.GptRequest
 import com.example.dreamarchive.network.OpenAIApiService
+import com.example.dreamarchive.ui.screen.setting.SettingViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +17,9 @@ import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class TalkViewModel: ViewModel() {
+class TalkViewModel(
+    private val settingViewModel: SettingViewModel
+): ViewModel() {
     private val _messages = MutableStateFlow<List<Pair<String, Boolean>>>(emptyList())
     val messages: StateFlow<List<Pair<String, Boolean>>> = _messages
 
@@ -32,18 +36,28 @@ class TalkViewModel: ViewModel() {
     // BuildConfig 経由で API キーを取得
     private val apiKey = BuildConfig.OPENAI_API_KEY
 
-    fun addMessage(message: String, isUser: Boolean){
+    fun addMessage(message: String, isUser: Boolean) {
         _messages.value = _messages.value + (message to isUser)
     }
 
-    fun sendMessageToGpt(inputText: String){
+    fun sendMessageToGpt(inputText: String) {
         addMessage(inputText, isUser = true)
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                // 良い夢モードの状態を取得
+                val isGoodDreamMode = settingViewModel.isGoodDreamMode.value
+
+                // トグルボタンに応じたプロンプトの切り替え
+                val systemMessage = if (isGoodDreamMode) {
+                    "あなたは作家です。今からユーザーが今朝見た夢の内容を入力するので、その続きの物語を140字程度で考えてください。必ず140字程度という文字制限を守ってください。必ず物語をハッピーエンドで終わらせてください。"
+                } else {
+                    "あなたは作家です。今からユーザーが今朝見た夢の内容を入力するので、その続きの物語を140字程度で考えてください。必ず140字程度という文字制限を守ってください。"
+                }
+
                 val request = GptRequest(
                     messages = listOf(
-                        GptMessage("system", "あなたは作家です。今からユーザーが今朝見た夢の内容を入力するので、その続きの物語を140字程度で考えてください。必ず140字程度という文字制限を守ってください。"),
+                        GptMessage("system", systemMessage),
                         GptMessage("user", inputText)
                     )
                 )
@@ -67,5 +81,16 @@ class TalkViewModel: ViewModel() {
                 addMessage("Failed to communicate with GPT: ${e.message}", isUser = false)
             }
         }
+    }
+}
+
+class TalkViewModelFactory(
+    private val settingViewModel: SettingViewModel
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(TalkViewModel::class.java)) {
+            return TalkViewModel(settingViewModel) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
