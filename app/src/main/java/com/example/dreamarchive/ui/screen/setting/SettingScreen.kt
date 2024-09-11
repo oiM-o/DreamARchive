@@ -16,18 +16,26 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
-    navController: NavController
+    navController: NavController,
+    settingViewModel: SettingViewModel = viewModel() // ViewModelを取得
 ){
+    // ViewModelの状態を監視
+    val isGoodDreamMode by settingViewModel.isGoodDreamMode.collectAsState()
+
     Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
@@ -81,7 +89,17 @@ fun SettingScreen(
         Column (
             modifier = Modifier.padding(paddingValues)
         ){
-            Text(text = "This is the setting screen.")
+            Row (
+                modifier = Modifier.fillMaxWidth()
+            ){
+                Text(text = "いい夢モード")
+                Switch(
+                    checked = isGoodDreamMode,
+                    onCheckedChange = { enabled ->
+                        settingViewModel.toggleGoodDreamMode(enabled) // 状態を更新
+                    }
+                )
+            }
         }
     }
 }
