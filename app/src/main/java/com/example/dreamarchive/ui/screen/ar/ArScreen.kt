@@ -120,8 +120,7 @@ fun ARScreen(
             cameraNode = cameraNode,
             childNodes = childNodes,
             onSessionUpdated=onSessionUpdated,
-            onGestureListener= onGestureListener,
-
+            onGestureListener= onGestureListener
     )
 }
 
