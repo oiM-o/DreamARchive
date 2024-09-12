@@ -110,17 +110,17 @@ fun ARScreen(
             }
         })
 
-        ARScene(
-            modifier = Modifier.fillMaxSize(),
-            engine = engine,
-            modelLoader = modelLoader,
-            sessionConfiguration=sessionConfiguration,
-            planeRenderer=planeRenderer,
-            view = view,
-            cameraNode = cameraNode,
-            childNodes = childNodes,
-            onSessionUpdated=onSessionUpdated,
-            onGestureListener= onGestureListener
+    ARScene(
+        modifier = Modifier.fillMaxSize(),
+        engine = engine,
+        modelLoader = modelLoader,
+        sessionConfiguration=sessionConfiguration,
+        planeRenderer=planeRenderer,
+        view = view,
+        cameraNode = cameraNode,
+        childNodes = childNodes,
+        onSessionUpdated=onSessionUpdated,
+        onGestureListener= onGestureListener
     )
 }
 
