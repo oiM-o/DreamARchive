@@ -57,7 +57,7 @@ fun TalkScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "TalkRoom"
+                        "DreamARchive"
                     )
                 },
                 navigationIcon = {
@@ -116,7 +116,15 @@ fun TalkScreen(
                 }
             }
         },
-    ) { innerpadding ->
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate("arscreen") }
+            ) {
+                Text("Go to AR Screen")
+            }
+        },
+    )
+    { innerpadding ->
         Column(
             modifier =
             Modifier
