@@ -74,7 +74,7 @@ fun TalkScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "TalkRoom",
+                        "DreamARchive",
                         color = Color.White
                     )
                 },
@@ -160,8 +160,15 @@ fun TalkScreen(
         modifier = Modifier
             .fillMaxSize()
             .imePadding()// キーボード表示時のパディング調整
-
-    ) { innerpadding ->
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate("arscreen") }
+            ) {
+                Text("Go to AR Screen")
+            }
+        },
+    )
+    { innerpadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()//サイズをスクリーン全体に

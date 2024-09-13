@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.2"
+arsceneview = "2.1.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -10,12 +11,16 @@ lifecycleViewmodel = "2.8.4"
 navigation = "2.7.7"
 activityCompose = "1.9.1"
 composeBom = "2024.06.00"
+paparazziVersion = "1.0.0"
 retrofit = "2.9.0"
 converter-gson = "2.9.0"
 dotenv-kotlin = "6.2.2"
+sceneview = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+app-paparazzi = { module = "app.cash.paparazzi:paparazzi", version.ref = "paparazziVersion" }
+arsceneview = { module = "io.github.sceneview:arsceneview", version.ref = "arsceneview" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -31,6 +36,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+sceneview = { module = "io.github.sceneview:sceneview", version.ref = "sceneview" }
 squareup-retrofit2-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 squareup-retrofit2-converter-gson = { group = 'com.squareup.retrofit2', name = 'converter-gson', version.ref = 'converter-gson' }
 github-cdimascio-dotenv-kotlin = { group = 'io.github.cdimascio', name = 'dotenv-kotlin', version.ref = 'dotenv-kotlin' }
