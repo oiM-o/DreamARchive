@@ -30,6 +30,7 @@ android {
             localProperties.load(FileInputStream(localPropertiesFile))
         }
         buildConfigField("String", "OPENAI_API_KEY", "\"${localProperties.getProperty("OPENAI_API_KEY")}\"")
+        buildConfigField("String", "MESHY_API_KEY", "\"${localProperties.getProperty("MESHY_API_KEY")}\"")
     }
 
 

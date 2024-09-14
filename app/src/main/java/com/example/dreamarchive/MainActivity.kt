@@ -33,6 +33,9 @@ fun NavigationApp(){
         composable("talkscreen"){ TalkScreen(navController) }
         composable("settingscreen"){ SettingScreen(navController) }
         composable("archivescreen"){ ArchiveScreen(navController) }
-        composable("arscreen"){ ARScreen(navController) }
+        composable("arscreen/{modelUrl}") { backStackEntry ->
+            val modelUrl = backStackEntry.arguments?.getString("modelUrl")
+            ARScreen(navController, modelUrl)
+        }
     }
 }

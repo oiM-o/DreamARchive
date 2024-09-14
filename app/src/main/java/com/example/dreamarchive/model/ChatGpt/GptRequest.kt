@@ -1,4 +1,4 @@
-package com.example.dreamarchive.model
+package com.example.dreamarchive.model.ChatGpt
 
 data class GptRequest(
     val model: String = "gpt-3.5-turbo",

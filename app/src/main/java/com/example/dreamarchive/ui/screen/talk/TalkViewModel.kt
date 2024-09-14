@@ -3,10 +3,13 @@ package com.example.dreamarchive.ui.screen.talk
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.dreamarchive.BuildConfig
-import com.example.dreamarchive.model.GptMessage
-import com.example.dreamarchive.model.GptRequest
-import com.example.dreamarchive.network.OpenAIApiService
+import com.example.dreamarchive.model.ChatGpt.GptMessage
+import com.example.dreamarchive.model.ChatGpt.GptRequest
+import com.example.dreamarchive.model.Meshy.MeshyRequest
+import com.example.dreamarchive.network.ChatGpt.OpenAIApiService
+import com.example.dreamarchive.network.Meshy.MeshyApiService
 import com.example.dreamarchive.ui.screen.setting.SettingViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,23 +21,32 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class TalkViewModel(
-    private val settingViewModel: SettingViewModel
+    private val settingViewModel: SettingViewModel,
+    private val navController: NavController
 ): ViewModel() {
     private val _messages = MutableStateFlow<List<Pair<String, Boolean>>>(emptyList())
     val messages: StateFlow<List<Pair<String, Boolean>>> = _messages
 
-    private val BASE_URL =
-        "https://api.openai.com/"
+    private val OPENAI_BASE_URL = "https://api.openai.com/"
+    private val MESHY_BASE_URL = "https://api.meshy.ai/"
 
-    private val retrofit = Retrofit.Builder()
+    private val retrofitOpenAI = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL)
+        .baseUrl(OPENAI_BASE_URL)
         .build()
 
-    private val openAIApi = retrofit.create(OpenAIApiService::class.java)
+    private val retrofitMeshy = Retrofit.Builder() // Meshy用のRetrofitインスタンスを追加
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(MESHY_BASE_URL)
+        .build()
+
+    private val openAIApi = retrofitOpenAI.create(OpenAIApiService::class.java)
+    private val meshyApi = retrofitMeshy.create(MeshyApiService::class.java) // Meshy APIのインターフェース
+
 
     // BuildConfig 経由で API キーを取得
-    private val apiKey = BuildConfig.OPENAI_API_KEY
+    private val OpenAIApiKey = BuildConfig.OPENAI_API_KEY
+    private val MeshyApiKey = BuildConfig.MESHY_API_KEY
 
     fun addMessage(message: String, isUser: Boolean) {
         _messages.value = _messages.value + (message to isUser)
@@ -63,7 +75,7 @@ class TalkViewModel(
                 )
 
                 // APIキーを"Bearer "と一緒にAuthorizationヘッダーに渡す
-                val authHeader = "Bearer $apiKey"
+                val authHeader = "Bearer $OpenAIApiKey"
                 val response = openAIApi.sendMessage(authHeader, request).awaitResponse()
 
                 if (response.isSuccessful) {
@@ -72,6 +84,8 @@ class TalkViewModel(
 
                     gptMessage?.let {
                         addMessage(it, isUser = false)
+                        // ChatGPTからの応答が成功した後にMeshy APIを呼び出す
+                        sendTextToMeshy(it) // ここでMeshy APIにテキストを送信
                     }
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
@@ -82,14 +96,42 @@ class TalkViewModel(
             }
         }
     }
+
+    // MeshyAPIへのリクエストを送信する関数を追加
+    private fun sendTextToMeshy(generatedText: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = MeshyRequest(text = generatedText)
+
+                val response = meshyApi.generate3DModel("Bearer $MeshyApiKey",request).awaitResponse()
+
+                if (response.isSuccessful) {
+                    val meshyResponse = response.body()
+                    val modelUrl = meshyResponse?.modelUrl
+
+                    modelUrl?.let {
+                        addMessage("3Dモデル生成完了: $modelUrl", isUser = false)
+                        // 自動遷移の場合: MeshyAPIの3Dモデルが生成された後、AR画面に遷移
+                        navController.navigate("ar_screen?modelUrl=$modelUrl") // AR画面にモデルURLを渡す
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                    addMessage("Error: ${response.code()} - $errorBody", isUser = false)
+                }
+            } catch (e: Exception) {
+                addMessage("Failed to communicate with Meshy API: ${e.message}", isUser = false)
+            }
+        }
+    }
 }
 
 class TalkViewModelFactory(
-    private val settingViewModel: SettingViewModel
+    private val settingViewModel: SettingViewModel,
+    private val navController: NavController
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(TalkViewModel::class.java)) {
-            return TalkViewModel(settingViewModel) as T
+            return TalkViewModel(settingViewModel, navController) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

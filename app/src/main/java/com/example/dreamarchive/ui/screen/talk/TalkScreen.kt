@@ -55,7 +55,7 @@ import com.example.dreamarchive.R
 fun TalkScreen(
     navController: NavController,
     settingViewModel: SettingViewModel = viewModel(),  // 設定のViewModelを取得
-    talkViewModel: TalkViewModel = viewModel(factory = TalkViewModelFactory(settingViewModel)) // TalkViewModelに設定のViewModelを渡す
+    talkViewModel: TalkViewModel = viewModel(factory = TalkViewModelFactory(settingViewModel, navController)) // TalkViewModelに設定のViewModelを渡す
 ) {
 
     val messages by talkViewModel.messages.collectAsState()
