@@ -159,7 +159,7 @@ fun TalkScreen(
         contentWindowInsets = WindowInsets(0), // これでキーボード表示時のレイアウト調整を防ぐ
         modifier = Modifier
             .fillMaxSize()
-            .imePadding()// キーボード表示時のパディング調整
+            .imePadding(),// キーボード表示時のパディング調整
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("arscreen") }
