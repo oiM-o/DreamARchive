@@ -1,6 +1,6 @@
 package com.example.dreamarchive.model.Meshy
 
 data class MeshyRequest(
-    val text: String, // OpenAIで生成された文章
-    val modelType: String = "basic" // 任意でMeshyが提供するモデルの種類を指定
+    val mode: String = "preview",  // モードを "preview" に設定
+    val prompt: String, // OpenAIで生成された文章
 )

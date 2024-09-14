@@ -101,7 +101,10 @@ class TalkViewModel(
     private fun sendTextToMeshy(generatedText: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val request = MeshyRequest(text = generatedText)
+                val request = MeshyRequest(
+                    mode = "preview",
+                    prompt = generatedText,
+                )
 
                 val response = meshyApi.generate3DModel("Bearer $MeshyApiKey",request).awaitResponse()
 
