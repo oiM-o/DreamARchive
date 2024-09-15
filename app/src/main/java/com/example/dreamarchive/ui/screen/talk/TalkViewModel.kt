@@ -12,6 +12,7 @@ import com.example.dreamarchive.network.ChatGpt.OpenAIApiService
 import com.example.dreamarchive.network.Meshy.MeshyApiService
 import com.example.dreamarchive.ui.screen.setting.SettingViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -106,16 +107,16 @@ class TalkViewModel(
                     prompt = generatedText,
                 )
 
-                val response = meshyApi.generate3DModel("Bearer $MeshyApiKey",request).awaitResponse()
+                val response = meshyApi.generate3DModel("Bearer $MeshyApiKey",request)
 
                 if (response.isSuccessful) {
                     val meshyResponse = response.body()
-                    val modelUrl = meshyResponse?.modelUrl
+                    val taskId = meshyResponse?.id
 
-                    modelUrl?.let {
-                        addMessage("3Dモデル生成完了: $modelUrl", isUser = false)
-                        // 自動遷移の場合: MeshyAPIの3Dモデルが生成された後、AR画面に遷移
-                        navController.navigate("ar_screen?modelUrl=$modelUrl") // AR画面にモデルURLを渡す
+                    taskId?.let {
+                        addMessage("タスクID取得: $taskId", isUser = false)
+                        // 3Dモデルの生成が完了するまでステータスをチェック
+                        checkModelStatus(taskId)
                     }
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
@@ -123,6 +124,46 @@ class TalkViewModel(
                 }
             } catch (e: Exception) {
                 addMessage("Failed to communicate with Meshy API: ${e.message}", isUser = false)
+            }
+        }
+    }
+
+    // 3Dモデルの生成ステータスをポーリングしてチェック
+    private fun checkModelStatus(taskId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                var modelUrl: String? = null
+                var status: String
+
+                // 定期的にステータスをチェック（ポーリング）
+                do {
+                    // 少し待ってからリクエスト
+                    delay(5000) // 5秒ごとにチェック
+
+                    val response = meshyApi.checkModelStatus("Bearer $MeshyApiKey", taskId)
+
+                    if (response.isSuccessful) {
+                        val meshyResponse = response.body()
+                        status = meshyResponse?.status ?: "UNKNOWN"
+
+                        if (status == "SUCCEEDED") {
+                            modelUrl = meshyResponse?.modelUrls?.glb
+                        }
+                    } else {
+                        status = "FAILED"
+                        val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                        addMessage("Error: ${response.code()} - $errorBody", isUser = false)
+                        break
+                    }
+                } while (status != "SUCCEEDED" && status != "FAILED")
+
+                // モデルURLが取得できた場合、AR画面に遷移
+                modelUrl?.let {
+                    addMessage("3Dモデル生成完了: $it", isUser = false)
+                    navController.navigate("ar_screen?modelUrl=$it")
+                }
+            } catch (e: Exception) {
+                addMessage("Failed to check model status: ${e.message}", isUser = false)
             }
         }
     }
