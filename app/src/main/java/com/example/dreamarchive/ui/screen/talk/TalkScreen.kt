@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +58,11 @@ fun TalkScreen(
     settingViewModel: SettingViewModel = viewModel(),  // 設定のViewModelを取得
     talkViewModel: TalkViewModel = viewModel(factory = TalkViewModelFactory(settingViewModel, navController)) // TalkViewModelに設定のViewModelを渡す
 ) {
+    LaunchedEffect(Unit) {
+        talkViewModel.navigationEvent.collect { route ->
+            navController.navigate(route)
+        }
+    }
 
     val messages by talkViewModel.messages.collectAsState()
     var inputText by remember { mutableStateOf("") }

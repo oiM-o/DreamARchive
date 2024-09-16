@@ -14,14 +14,19 @@ import com.example.dreamarchive.network.Meshy.MeshyApiService
 import com.example.dreamarchive.ui.screen.setting.SettingViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 
 class TalkViewModel(
@@ -31,6 +36,9 @@ class TalkViewModel(
     private val TAG = "TalkViewModel"
     private val _messages = MutableStateFlow<List<Pair<String, Boolean>>>(emptyList())
     val messages: StateFlow<List<Pair<String, Boolean>>> = _messages
+
+    private val _navigationEvent = MutableSharedFlow<String>()
+    val navigationEvent = _navigationEvent.asSharedFlow()
 
     private val OPENAI_BASE_URL = "https://api.openai.com/"
     private val MESHY_BASE_URL = "https://api.meshy.ai/"
@@ -205,8 +213,11 @@ class TalkViewModel(
 
                 // モデルURLが取得できた場合、AR画面に遷移
                 modelUrl?.let {
+                    val encodedUrl = URLEncoder.encode(it, StandardCharsets.UTF_8.toString())
                     Log.d(TAG, "3Dモデル生成完了: $it")
-                    navController.navigate("ar_screen?modelUrl=$it")
+                    withContext(Dispatchers.Main) {
+                        _navigationEvent.emit("ar_screen?modelUrl=$encodedUrl")
+                    }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to check model status: ${e.message}", e)

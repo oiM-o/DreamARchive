@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
@@ -22,10 +21,8 @@ import io.github.sceneview.ar.arcore.getUpdatedPlanes
 import io.github.sceneview.ar.arcore.isValid
 import io.github.sceneview.ar.node.AnchorNode
 import io.github.sceneview.ar.rememberARCameraNode
-import io.github.sceneview.loaders.MaterialLoader
 import io.github.sceneview.loaders.ModelLoader
 import io.github.sceneview.model.ModelInstance
-import io.github.sceneview.node.CubeNode
 import io.github.sceneview.node.ModelNode
 import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberMaterialLoader
@@ -33,6 +30,8 @@ import io.github.sceneview.rememberModelLoader
 import io.github.sceneview.rememberNodes
 import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 
 //モデルインスタンスの最⼤数
@@ -41,8 +40,12 @@ private const val kMaxModelInstances = 10
 @Composable
 fun ARScreen(
     navController: NavController,
-    modelUrl: String? // MeshyAPIから取得したmodelUrlを引数として受け取る
+    decodedUrl: String? // MeshyAPIから取得したmodelUrlを引数として受け取る
 ){
+    val decodedUrl = decodedUrl?.let {
+        URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
+    }
+
     val engine = rememberEngine()
     val modelLoader=rememberModelLoader(engine =engine)
 
@@ -117,8 +120,8 @@ fun ARScreen(
     )
 
     // モデルを非同期で読み込む
-    LaunchedEffect(modelUrl) {
-        modelUrl?.let { url ->
+    LaunchedEffect(decodedUrl) {
+        decodedUrl?.let { url ->
             // ModelInstanceを非同期にロード
             modelLoader.loadModelInstanceAsync(url) { modelInstance ->
                 modelInstance?.let { instance ->
