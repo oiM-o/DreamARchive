@@ -82,6 +82,10 @@ dependencies {
     //converter
     implementation(libs.squareup.retrofit2.converter.gson)
     implementation(libs.github.cdimascio.dotenv.kotlin)
+    //room
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
     //navigation-compose
     implementation(libs.androidx.navigation)
     //SceneView
