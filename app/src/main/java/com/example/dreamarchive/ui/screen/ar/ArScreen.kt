@@ -2,12 +2,12 @@ package com.example.dreamarchive.ui.screen.ar
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
@@ -21,10 +21,8 @@ import io.github.sceneview.ar.arcore.getUpdatedPlanes
 import io.github.sceneview.ar.arcore.isValid
 import io.github.sceneview.ar.node.AnchorNode
 import io.github.sceneview.ar.rememberARCameraNode
-import io.github.sceneview.loaders.MaterialLoader
 import io.github.sceneview.loaders.ModelLoader
 import io.github.sceneview.model.ModelInstance
-import io.github.sceneview.node.CubeNode
 import io.github.sceneview.node.ModelNode
 import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberMaterialLoader
@@ -32,18 +30,28 @@ import io.github.sceneview.rememberModelLoader
 import io.github.sceneview.rememberNodes
 import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
-//3Dモデルファイルのパス
-private const val kModelFile="models/model.glb"
+
 //モデルインスタンスの最⼤数
 private const val kMaxModelInstances = 10
 
 @Composable
 fun ARScreen(
-    navController: NavController
+    navController: NavController,
+    decodedUrl: String? // MeshyAPIから取得したmodelUrlを引数として受け取る
 ){
+    val decodedUrl = decodedUrl?.let {
+        URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
+    }
+
     val engine = rememberEngine()
     val modelLoader=rememberModelLoader(engine =engine)
+
+    // モデルが読み込まれたかどうかを管理するフラグ
+    var isModelLoaded by remember { mutableStateOf(false) }
+
     val sessionConfiguration:(session: Session, Config)->Unit=
     {session,config->
         //深度モード設定
@@ -65,19 +73,20 @@ fun ARScreen(
     var frame by remember{mutableStateOf<Frame?>(null)}
     val materialLoader=rememberMaterialLoader(engine=engine)
     val modelInstances=remember{mutableListOf<ModelInstance>()}
+
     val onSessionUpdated:(session:Session, frame:Frame)->Unit=
     {session, updatedFrame->
         frame=updatedFrame
-        if(childNodes.isEmpty()){
+        if(childNodes.isEmpty() && isModelLoaded){
             //更新された平⾯情報から、⽔平平⾯を検索
             updatedFrame.getUpdatedPlanes()
                 .firstOrNull{it.type== Plane.Type.HORIZONTAL_UPWARD_FACING}
-                ?.let{it.createAnchorOrNull(it.centerPose)}?.let { anchor ->
+                ?.let{it.createAnchorOrNull(it.centerPose)}
+                ?.let { anchor ->
                     //追加
                     childNodes += createAnchorNode(
                         engine = engine,
                         modelLoader = modelLoader,
-                        materialLoader = materialLoader,
                         modelInstances = modelInstances,
                         anchor = anchor,
                     )
@@ -102,13 +111,31 @@ fun ARScreen(
                         childNodes+= createAnchorNode(
                             engine=engine,
                             modelLoader=modelLoader,
-                            materialLoader=materialLoader,
                             modelInstances=modelInstances,
                             anchor=anchor
                         )
                     }
             }
-        })
+        }
+    )
+
+    // モデルを非同期で読み込む
+    LaunchedEffect(decodedUrl) {
+        decodedUrl?.let { url ->
+            // ModelInstanceを非同期にロード
+            modelLoader.loadModelInstanceAsync(url) { modelInstance ->
+                modelInstance?.let { instance ->
+                    // ModelInstanceを使ってModelNodeを作成
+                    val modelNode = ModelNode(modelInstance = instance).apply {
+                        isEditable = true   // 編集可能に設定
+                    }
+                    // ModelNodeを子ノードに追加
+                    childNodes.add(modelNode)
+                    isModelLoaded = true // モデルが正常に読み込まれたことを示す
+                }
+            }
+        }
+    }
 
     ARScene(
         modifier = Modifier.fillMaxSize(),
@@ -127,48 +154,16 @@ fun ARScreen(
 fun createAnchorNode(
     engine: Engine,
     modelLoader: ModelLoader,
-    materialLoader: MaterialLoader,
     modelInstances:MutableList<ModelInstance>,
     anchor: Anchor
 ): AnchorNode {
-    //anchorNodeの作成
-    val anchorNode=AnchorNode(engine =engine,anchor=anchor)
-    //ModelNodeの作成
-    val modelNode= ModelNode(
-        modelInstance=modelInstances.apply {
-            if(isEmpty()){
-                //kModelFile,kMaxModelInstancesはあとで定義します
-                this+=modelLoader
-                    .createInstancedModel(kModelFile,kMaxModelInstances)
-            }
-        }.removeLast(),
-        //0.5メートルの⽴⽅体に収まる⼤きさに調整します
-        scaleToUnits=0.5f
-    ).apply{
-        //ModelNodeがAnchorとは独⽴して回転できるように、編集可能(true)に設定する
-        isEditable=true
+    val anchorNode = AnchorNode(engine = engine, anchor = anchor)
+    val modelNode = ModelNode(
+        modelInstance = modelInstances.removeLastOrNull() ?: return anchorNode,
+        scaleToUnits = 0.5f
+    ).apply {
+        isEditable = true
     }
-    //boundingBoxNodeの作成
-    val boundingBoxNode= CubeNode(
-        engine,
-        size= modelNode.extents,
-        center=modelNode.center,
-        materialInstance=
-        materialLoader.createColorInstance(Color.White.copy(alpha=0.5f))
-    ).apply{
-        //⾮表⽰に設定
-        isVisible=false
-    }
-    //modelNodeにboundingBoxNodeを⼦ノードとして追加
-    modelNode.addChildNode(boundingBoxNode)
-    //anchorNodeにmodelNodeを⼦ノードとして追加
     anchorNode.addChildNode(modelNode)
-    //modelNodeとanchorNodeの編集状態が変更されたら、
-    //boundingBoxNodeの表⽰状態を編集中のみ表⽰するように設定
-    listOf(modelNode,anchorNode).forEach {
-        it.onEditingChanged={editingTransforms->
-            boundingBoxNode.isVisible=editingTransforms.isNotEmpty()
-        }
-    }
-        return anchorNode
+    return anchorNode
 }

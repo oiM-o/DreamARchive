@@ -30,6 +30,7 @@ android {
             localProperties.load(FileInputStream(localPropertiesFile))
         }
         buildConfigField("String", "OPENAI_API_KEY", "\"${localProperties.getProperty("OPENAI_API_KEY")}\"")
+        buildConfigField("String", "MESHY_API_KEY", "\"${localProperties.getProperty("MESHY_API_KEY")}\"")
     }
 
 
@@ -76,6 +77,8 @@ dependencies {
     implementation(libs.androidx.material3)
     // Retrofit
     implementation(libs.squareup.retrofit2.retrofit)
+    //okHTTP
+    implementation(libs.okhttp3.logging.interceptor)
     //converter
     implementation(libs.squareup.retrofit2.converter.gson)
     implementation(libs.github.cdimascio.dotenv.kotlin)
@@ -94,6 +97,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-
 }
