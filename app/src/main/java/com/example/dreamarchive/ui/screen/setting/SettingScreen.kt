@@ -122,12 +122,12 @@ fun SettingScreen(
         },
         containerColor = backgroundColor // Scaffoldの背景色を動的に変更
     ) {paddingValues ->
-        Column (
+        Row (
             modifier = Modifier
                 .fillMaxSize() // 画面全体を使う
                 .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally, // 横方向の中央揃え
-            verticalArrangement = Arrangement.Center // 縦方向の中央揃え
+            horizontalArrangement = Arrangement.Center, // 横方向の中央揃え
+            verticalAlignment = Alignment.CenterVertically // 縦方向の中央揃え
         ){
             // TextとSwitchの配置を縦に
             Text(
