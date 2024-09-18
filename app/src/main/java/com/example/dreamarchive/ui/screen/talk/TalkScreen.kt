@@ -2,22 +2,29 @@ package com.example.dreamarchive.ui.screen.talk
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
@@ -43,6 +50,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,12 +60,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.dreamarchive.ui.screen.setting.SettingViewModel
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.dreamarchive.R
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -184,21 +195,77 @@ fun TalkScreen(
                 .padding(innerpadding)
         ) {
             LazyColumn(
+                contentPadding = innerpadding,
                 modifier = Modifier
                     .weight(1f)//画面の残りの領域を使用
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                items(messages) { message ->
-                    // メッセージを枠で囲む
-                    Box(
-                        modifier = Modifier
-                            .padding(vertical = 8.dp, horizontal = 16.dp) // メッセージ間の余白
-                            .background(lightPurple.copy(alpha = 0.2f))//背景に淡い紫
-                            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp)) // 枠の設定
-                            .padding(16.dp) // 枠の内側にパディングを追加
 
+                items(messages) { message ->
+                    //メッセージがユーザーからかGPTからかで分岐
+                    val isUserMessage = message.second
+
+                    //左上だけを尖らせるためのカスタムシェイプ
+                    fun BubbleShape(): Shape {
+                        return RoundedCornerShape(
+                            topStart = CornerSize(0.dp),
+                            topEnd = CornerSize(16.dp),
+                            bottomEnd = CornerSize(16.dp),
+                            bottomStart = CornerSize(16.dp)
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.Start,//両方を左揃えに
+                        verticalAlignment = Alignment.Top//アイコンとメッセージを上揃えにする
                     ) {
-                        Text(text = message.first, color = darkPurple)
+                        if (!isUserMessage) {
+                            //GPT側のアイコン
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = "GPT Icon",
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .align(Alignment.Top)
+                            )
+
+                            // GPTの吹き出しメッセージ
+                            Box(
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp, horizontal = 16.dp) // メッセージ間の余白
+                                    .background(lightPurple.copy(alpha = 0.2f), shape = BubbleShape())//背景に淡い紫, 左上を尖らせた吹き出し
+                                    .border(1.dp, Color.Gray, BubbleShape()) // 枠の設定
+                                    .padding(16.dp) // 枠の内側にパディングを追加
+
+                            ) {
+                                Text(text = message.first, color = darkPurple)
+                            }
+                        } else {
+                            //ユーザー側のアイコン
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "User Icon",
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .align(Alignment.Top)
+                            )
+
+                            //ユーザーの吹き出しメッセージ
+                            Box(
+                                modifier = Modifier
+
+                                    .padding(vertical = 8.dp, horizontal = 16.dp) // メッセージ間の余白
+                                    .background(lightPurple.copy(alpha = 0.2f), shape = BubbleShape())//背景に淡い紫
+                                    .border(1.dp, Color.Gray, BubbleShape()) // 枠の設定
+                                    .padding(16.dp) // 枠の内側にパディングを追加
+
+                            ) {
+                                Text(text = message.first, color = darkPurple)
+                            }
+                        }
                     }
                 }
             }
@@ -225,6 +292,7 @@ fun TalkScreen(
         }
     }
 }
+
 
 @Preview
 @Composable
