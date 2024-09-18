@@ -4,6 +4,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("kapt")
 }
 
 android {
@@ -29,6 +30,7 @@ android {
             localProperties.load(FileInputStream(localPropertiesFile))
         }
         buildConfigField("String", "OPENAI_API_KEY", "\"${localProperties.getProperty("OPENAI_API_KEY")}\"")
+        buildConfigField("String", "MESHY_API_KEY", "\"${localProperties.getProperty("MESHY_API_KEY")}\"")
     }
 
 
@@ -75,17 +77,30 @@ dependencies {
     implementation(libs.androidx.material3)
     // Retrofit
     implementation(libs.squareup.retrofit2.retrofit)
+    //okHTTP
+    implementation(libs.okhttp3.logging.interceptor)
     //converter
     implementation(libs.squareup.retrofit2.converter.gson)
     implementation(libs.github.cdimascio.dotenv.kotlin)
+    //room
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    //navigation-compose
     implementation(libs.androidx.navigation)
+    //Lottie
+    implementation(libs.lottie.compose)
+    //SceneView
+    implementation(libs.sceneview)
+    //ARSceneView
+    implementation(libs.arsceneview)
     testImplementation(libs.junit)
+    //paparazzi
+    testImplementation(libs.app.paparazzi)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-
 }

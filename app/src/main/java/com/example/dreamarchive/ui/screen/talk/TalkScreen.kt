@@ -41,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,6 +61,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.dreamarchive.ui.screen.setting.SettingViewModel
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.dreamarchive.R
 import java.time.LocalDate
 
@@ -68,8 +74,13 @@ import java.time.LocalDate
 fun TalkScreen(
     navController: NavController,
     settingViewModel: SettingViewModel = viewModel(),  // 設定のViewModelを取得
-    talkViewModel: TalkViewModel = viewModel(factory = TalkViewModelFactory(settingViewModel)) // TalkViewModelに設定のViewModelを渡す
+    talkViewModel: TalkViewModel = viewModel(factory = TalkViewModelFactory(settingViewModel, navController)) // TalkViewModelに設定のViewModelを渡す
 ) {
+    LaunchedEffect(Unit) {
+        talkViewModel.navigationEvent.collect { route ->
+            navController.navigate(route)
+        }
+    }
 
     val messages by talkViewModel.messages.collectAsState()
     var inputText by remember { mutableStateOf("") }
@@ -82,13 +93,15 @@ fun TalkScreen(
     //キーボードを閉じるためのFocusManagerを取得
     val focusManager = LocalFocusManager.current
 
+    // Meshy APIの現在のステータスを監視
+    val currentStatus by talkViewModel.currentStatus.collectAsState()
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "TalkRoom",
+                        "DreamARchive",
                         color = Color.White
                     )
                 },
@@ -173,9 +186,9 @@ fun TalkScreen(
         contentWindowInsets = WindowInsets(0), // これでキーボード表示時のレイアウト調整を防ぐ
         modifier = Modifier
             .fillMaxSize()
-            .imePadding()// キーボード表示時のパディング調整
-
-    ) { innerpadding ->
+            .imePadding(),// キーボード表示時のパディング調整
+    )
+    { innerpadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()//サイズをスクリーン全体に
@@ -254,6 +267,26 @@ fun TalkScreen(
                             }
                         }
                     }
+                }
+            }
+            // ローディングアニメーションの表示
+            if (currentStatus == "PENDING" || currentStatus == "IN_PROGRESS") {
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading_animation))
+                val progress by animateLottieCompositionAsState(
+                    composition,
+                    iterations = LottieConstants.IterateForever
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LottieAnimation(
+                        composition = composition,
+                        progress = progress,
+                        modifier = Modifier.size(150.dp)
+                    )
                 }
             }
         }
