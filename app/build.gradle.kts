@@ -84,6 +84,8 @@ dependencies {
     implementation(libs.github.cdimascio.dotenv.kotlin)
     //navigation-compose
     implementation(libs.androidx.navigation)
+    //Lottie
+    implementation(libs.lottie.compose)
     //SceneView
     implementation(libs.sceneview)
     //ARSceneView
