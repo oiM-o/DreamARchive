@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -49,6 +51,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.dreamarchive.ui.screen.setting.SettingViewModel
 import androidx.compose.ui.res.painterResource
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.dreamarchive.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,6 +81,9 @@ fun TalkScreen(
 
     //キーボードを閉じるためのFocusManagerを取得
     val focusManager = LocalFocusManager.current
+
+    // Meshy APIの現在のステータスを監視
+    val currentStatus by talkViewModel.currentStatus.collectAsState()
 
     Scaffold(
         topBar = {
@@ -166,13 +176,6 @@ fun TalkScreen(
         modifier = Modifier
             .fillMaxSize()
             .imePadding(),// キーボード表示時のパディング調整
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate("arscreen") }
-            ) {
-                Text("Go to AR Screen")
-            }
-        },
     )
     { innerpadding ->
         Column(
@@ -197,6 +200,26 @@ fun TalkScreen(
                     ) {
                         Text(text = message.first, color = darkPurple)
                     }
+                }
+            }
+            // ローディングアニメーションの表示
+            if (currentStatus == "PENDING" || currentStatus == "IN_PROGRESS") {
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading_animation))
+                val progress by animateLottieCompositionAsState(
+                    composition,
+                    iterations = LottieConstants.IterateForever
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LottieAnimation(
+                        composition = composition,
+                        progress = progress,
+                        modifier = Modifier.size(150.dp)
+                    )
                 }
             }
         }

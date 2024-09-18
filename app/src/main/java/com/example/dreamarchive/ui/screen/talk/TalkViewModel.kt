@@ -40,6 +40,10 @@ class TalkViewModel(
     private val _navigationEvent = MutableSharedFlow<String>()
     val navigationEvent = _navigationEvent.asSharedFlow()
 
+    // 現在のMeshy APIのステータスを保持するStateFlowを追加
+    private val _currentStatus = MutableStateFlow<String?>(null)
+    val currentStatus: StateFlow<String?> = _currentStatus
+
     private val OPENAI_BASE_URL = "https://api.openai.com/"
     private val MESHY_BASE_URL = "https://api.meshy.ai/"
 
@@ -148,6 +152,7 @@ class TalkViewModel(
 
                     val taskId = meshyCreateResponse?.result // "result" フィールドから取得
                     val status = "PENDING" // 初期ステータス。APIが即時にステータスを返さない場合
+                    _currentStatus.value = status
 
                     Log.d(TAG, "MeshyAPI Status: $status") // ステータスをログ出力
 
@@ -191,6 +196,9 @@ class TalkViewModel(
                         status = meshyResponse?.status ?: "UNKNOWN"
                         Log.d(TAG, "MeshyAPI Status: $status") // ステータスをログ出力
                         Log.d(TAG, "MeshyAPI Response: $meshyResponse") // レスポンス全体をログ出力
+
+                        // 現在のステータスを更新
+                        _currentStatus.value = status // コメントアウト: 現在のステータスを更新
 
                         if (status.equals("SUCCEEDED", ignoreCase = true)) {
                             modelUrl = meshyResponse?.modelUrls?.glb

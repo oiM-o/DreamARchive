@@ -88,6 +88,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     //navigation-compose
     implementation(libs.androidx.navigation)
+    //Lottie
+    implementation(libs.lottie.compose)
     //SceneView
     implementation(libs.sceneview)
     //ARSceneView
