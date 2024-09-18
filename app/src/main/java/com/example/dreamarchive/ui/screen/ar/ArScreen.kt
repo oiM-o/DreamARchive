@@ -1,13 +1,26 @@
 package com.example.dreamarchive.ui.screen.ar
 
+import android.content.Context
+import android.graphics.Bitmap
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
@@ -30,6 +43,11 @@ import io.github.sceneview.rememberModelLoader
 import io.github.sceneview.rememberNodes
 import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -42,6 +60,8 @@ fun ARScreen(
     navController: NavController,
     decodedUrl: String? // MeshyAPIから取得したmodelUrlを引数として受け取る
 ){
+    val viewModel: ArViewModel = viewModel()
+
     val decodedUrl = decodedUrl?.let {
         URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
     }
@@ -136,19 +156,34 @@ fun ARScreen(
             }
         }
     }
+        ARScene(
+            modifier = Modifier.fillMaxSize(),
+            engine = engine,
+            modelLoader = modelLoader,
+            sessionConfiguration = sessionConfiguration,
+            planeRenderer = planeRenderer,
+            view = view,
+            cameraNode = cameraNode,
+            childNodes = childNodes,
+            onSessionUpdated = onSessionUpdated,
+            onGestureListener = onGestureListener
+        )
+}
 
-    ARScene(
-        modifier = Modifier.fillMaxSize(),
-        engine = engine,
-        modelLoader = modelLoader,
-        sessionConfiguration=sessionConfiguration,
-        planeRenderer=planeRenderer,
-        view = view,
-        cameraNode = cameraNode,
-        childNodes = childNodes,
-        onSessionUpdated=onSessionUpdated,
-        onGestureListener= onGestureListener
-    )
+// 仮の関数：ARSceneからBitmapを取得する方法は使用しているライブラリによります
+fun getBitmapFromARScene(): Bitmap {
+    // 実装を追加
+    return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+}
+
+
+suspend fun saveBitmapToFile(context: Context, bitmap: ImageBitmap): File {
+    val filename = "photo_${System.currentTimeMillis()}.png"
+    val file = File(context.filesDir, filename)
+    FileOutputStream(file).use { out ->
+        bitmap.asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, out)
+    }
+    return file
 }
 
 fun createAnchorNode(
