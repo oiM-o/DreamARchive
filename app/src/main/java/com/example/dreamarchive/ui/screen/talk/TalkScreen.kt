@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -35,11 +36,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,6 +53,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Shape
@@ -61,6 +66,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.dreamarchive.ui.screen.setting.SettingViewModel
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -86,9 +92,11 @@ fun TalkScreen(
     var inputText by remember { mutableStateOf("") }
 
     //紫系統のカラーを定義
-    val darkPurple = Color(0xFF6A1B9A)
+    val darkPurple = Color(0xE623054B)
     val lightPurple = Color(0xFFCE93D8)
     val mediumPurple = Color(0xFF8E24AA)
+    val lightGrey = Color(0xFFE0E0E0)
+    val mediumGrey = Color(0xD9373364)
 
     //キーボードを閉じるためのFocusManagerを取得
     val focusManager = LocalFocusManager.current
@@ -96,13 +104,18 @@ fun TalkScreen(
     // Meshy APIの現在のステータスを監視
     val currentStatus by talkViewModel.currentStatus.collectAsState()
 
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
+
+
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
                         "DreamARchive",
-                        color = Color.White
+                        color = Color.LightGray
                     )
                 },
                 navigationIcon = {
@@ -112,17 +125,20 @@ fun TalkScreen(
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "SettingDrawer",
-                            tint = Color.White
+                            tint = Color.LightGray
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = darkPurple
+                    containerColor = mediumGrey
                 )
             )
         },
         bottomBar = {
-            Column {
+            Column (
+                modifier = Modifier
+                    .background(darkPurple)
+            ){
                 OutlinedTextField(
                     value = inputText,
                     onValueChange = { newText -> inputText = newText },
@@ -140,32 +156,43 @@ fun TalkScreen(
                             Icon(
                                 imageVector = Icons.Default.Send,
                                 contentDescription = "send_message_to_GPT",
-                                tint = mediumPurple
+                                tint = darkPurple
                             )
                         }
                     },
-                    label = { Text(text = "Type your message...") },
+                    label = { Text(text = "Tell me your dream...") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
                     colors = TextFieldDefaults.colors(
-                        focusedTextColor = mediumPurple,
-                        unfocusedTextColor = lightPurple
+                        focusedTextColor = mediumGrey,
+                        unfocusedTextColor = lightGrey
                     )
                 )
+
                 NavigationBar(
-                    containerColor = darkPurple
+                    containerColor = mediumGrey
                 ) {
                     NavigationBarItem(
                         icon = {
-                            Icon(imageVector = Icons.Default.Edit,
+                            Icon(
+                                painter = painterResource(id = R.drawable.partly_cloudy_night_24dp_5f6368_fill0_wght400_grad0_opsz24),
                                 contentDescription = "Edit",
-                                tint = Color.White
+                                tint = Color.LightGray
                             )
                         },
-                        label = { Text("Edit", color = Color.White) },
-                        selected = false,
-                        onClick = { /*TODO*/ }
+                        label = { Text("Edit", color = Color.LightGray) },
+                        selected = currentRoute == "TalkScreen",
+                        onClick = { navController.navigate("TalkScreen") },
+                        // Active Indicatorの追加
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = darkPurple,
+                            unselectedIconColor = Color.LightGray,
+                            indicatorColor = lightPurple // 選択時のインジケーターの色
+                        ),
+
+
+
                     )
                     NavigationBarItem(
                         icon = {
@@ -173,12 +200,19 @@ fun TalkScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_import_contacts_24),
                                 contentDescription = "MyARchive",
-                                tint = Color.White
+                                tint = Color.LightGray
                             )
                         },
-                        label = { Text("MyARchive", color = Color.White) },
+                        label = { Text("MyARchive", color = Color.LightGray) },
                         selected = false,
-                        onClick = { /*TODO*/ }
+                        onClick = { navController.navigate("ArchiveScreen") },
+                        // Active Indicatorの追加
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = darkPurple,
+                            unselectedIconColor = Color.LightGray,
+                            indicatorColor = mediumPurple // 選択時のインジケーターの色
+                        ),
+
                     )
                 }
             }
@@ -186,6 +220,7 @@ fun TalkScreen(
         contentWindowInsets = WindowInsets(0), // これでキーボード表示時のレイアウト調整を防ぐ
         modifier = Modifier
             .fillMaxSize()
+            .background(darkPurple)
             .imePadding(),// キーボード表示時のパディング調整
     )
     { innerpadding ->
@@ -193,12 +228,14 @@ fun TalkScreen(
             modifier = Modifier
                 .fillMaxSize()//サイズをスクリーン全体に
                 .padding(innerpadding)
+                .background(darkPurple)
         ) {
             LazyColumn(
                 contentPadding = innerpadding,
                 modifier = Modifier
                     .weight(1f)//画面の残りの領域を使用
                     .padding(horizontal = 16.dp, vertical = 8.dp)
+
             ) {
 
                 items(messages) { message ->
@@ -223,47 +260,61 @@ fun TalkScreen(
                         verticalAlignment = Alignment.Top//アイコンとメッセージを上揃えにする
                     ) {
                         if (!isUserMessage) {
-                            //GPT側のアイコン
-                            Icon(
-                                imageVector = Icons.Default.AccountCircle,
-                                contentDescription = "GPT Icon",
+                            Box(
                                 modifier = Modifier
-                                    .size(40.dp)
-                                    .align(Alignment.Top)
-                            )
+                                    .size(60.dp) // 円のサイズをアイコンより大きく
+                                    .background(color = darkPurple,shape = CircleShape), // 丸い背景を作る
+                                contentAlignment = Alignment.Center // 中央にアイコンを配置
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.smart_toy_24dp_5f6368_fill0_wght400_grad0_opsz24),
+                                    contentDescription = "GPT Icon",
+                                    modifier = Modifier
+                                        .size(40.dp),
+                                    tint = Color.LightGray
+                                )
+                            }
+
 
                             // GPTの吹き出しメッセージ
                             Box(
                                 modifier = Modifier
                                     .padding(vertical = 8.dp, horizontal = 16.dp) // メッセージ間の余白
-                                    .background(lightPurple.copy(alpha = 0.2f), shape = BubbleShape())//背景に淡い紫, 左上を尖らせた吹き出し
+                                    .background(mediumGrey.copy(alpha = 0.2f), shape = BubbleShape())//背景に淡い紫, 左上を尖らせた吹き出し
                                     .border(1.dp, Color.Gray, BubbleShape()) // 枠の設定
                                     .padding(16.dp) // 枠の内側にパディングを追加
 
                             ) {
-                                Text(text = message.first, color = darkPurple)
+                                Text(text = message.first, color = lightGrey)
                             }
                         } else {
                             //ユーザー側のアイコン
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "User Icon",
+                            Box(
                                 modifier = Modifier
-                                    .size(40.dp)
-                                    .align(Alignment.Top)
-                            )
+                                    .size(60.dp) // 円のサイズをアイコンより大きく
+                                    .background(color = darkPurple,shape = CircleShape), // 丸い背景を作る
+                                contentAlignment = Alignment.Center // 中央にアイコンを配置
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = "User Icon",
+                                    modifier = Modifier
+                                        .size(40.dp),
+                                    tint = Color.LightGray
+                                )
+                            }
+
 
                             //ユーザーの吹き出しメッセージ
                             Box(
                                 modifier = Modifier
-
                                     .padding(vertical = 8.dp, horizontal = 16.dp) // メッセージ間の余白
-                                    .background(lightPurple.copy(alpha = 0.2f), shape = BubbleShape())//背景に淡い紫
+                                    .background(mediumGrey.copy(alpha = 0.2f), shape = BubbleShape())//背景に淡い紫
                                     .border(1.dp, Color.Gray, BubbleShape()) // 枠の設定
                                     .padding(16.dp) // 枠の内側にパディングを追加
 
                             ) {
-                                Text(text = message.first, color = darkPurple)
+                                Text(text = message.first, color = lightGrey)
                             }
                         }
                     }

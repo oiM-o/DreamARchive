@@ -65,7 +65,7 @@ fun SettingScreen(
                     title = {
                         Text(
                             "Setting" ,
-                            color = Color.White
+                            color = Color.LightGray
                         )
                     },
                     navigationIcon = {
@@ -75,7 +75,7 @@ fun SettingScreen(
                             Icon(
                                 imageVector = Icons.Filled.ArrowBack,
                                 contentDescription = "SettingDrawer",
-                                tint = Color.White
+                                tint = Color.LightGray
                             )
                         }
                     },
@@ -93,12 +93,13 @@ fun SettingScreen(
                         onClick = { navController.navigate("talkscreen") },
                         modifier = Modifier.weight(1f),
                         icon = {
-                            Icon(imageVector = Icons.Default.Edit,
+                            Icon(
+                                painter = painterResource(id = R.drawable.partly_cloudy_night_24dp_5f6368_fill0_wght400_grad0_opsz24),
                                 contentDescription = "Edit",
-                                tint = Color.White
+                                tint = Color.LightGray
                             )
                         },
-                        label = { Text("Edit", color = Color.White) },
+                        label = { Text("Edit", color = Color.LightGray) },
                         selected = false
                     )
 
@@ -111,10 +112,10 @@ fun SettingScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_import_contacts_24),
                                 contentDescription = "MyARchive",
-                                tint = Color.White
+                                tint = Color.LightGray
                             )
                         },
-                        label = { Text("MyARchive", color = Color.White) },
+                        label = { Text("MyARchive", color = Color.LightGray) },
                         selected = false
                     )
                 }
@@ -125,9 +126,10 @@ fun SettingScreen(
         Row (
             modifier = Modifier
                 .fillMaxSize() // 画面全体を使う
+                .padding(top = 48.dp) // TopbarとRowの間に余白を追加（Topbarの高さ + 16dpの余白
                 .padding(paddingValues),
-            horizontalArrangement = Arrangement.Center, // 横方向の中央揃え
-            verticalAlignment = Alignment.CenterVertically // 縦方向の中央揃え
+            horizontalArrangement = Arrangement.SpaceBetween, // 横方向の中央揃え
+            verticalAlignment = Alignment.Top// 縦方向の中央揃え
         ){
             // TextとSwitchの配置を縦に
             Text(
