@@ -1,6 +1,8 @@
 package com.example.dreamarchive.ui.screen.setting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,15 +53,21 @@ fun SettingScreen(
     // ViewModelの状態を監視
     val isGoodDreamMode by settingViewModel.isGoodDreamMode.collectAsState()
 
-    //紫系統のカラーを定義
-    val darkPurple = Color(0xFF6A1B9A)
+    //紫系統のカラーを定義g
+    val darkPurple = Color(0xE6030126)
     val lightPurple = Color(0xFFCE93D8)
     val mediumPurple = Color(0xFF8E24AA)
+    val lightGrey = Color(0xFFE0E0E0)
+    val mediumGrey = Color(0xD9201D3A)
+    val darkGrey = Color(0xFF211A3A)
 
-    // 背景色を動的に変更する
-    val backgroundColor = if (isGoodDreamMode) lightPurple else Color.White
 
-    Scaffold(
+    Box( //全体の背景色を指定
+        modifier = Modifier
+            .fillMaxSize() // 画面全体を埋める
+            .background(darkPurple) // 背景色をdarkPurpleに設定
+    ){
+        Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
                     title = {
@@ -80,73 +88,75 @@ fun SettingScreen(
                         }
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = darkPurple
+                        containerColor = darkGrey
                     )
                 )
             },
-        bottomBar = {
-            NavigationBar (
-                containerColor = darkPurple
-            ) {
-                Row {
-                    NavigationBarItem(
-                        onClick = { navController.navigate("talkscreen") },
-                        modifier = Modifier.weight(1f),
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.partly_cloudy_night_24dp_5f6368_fill0_wght400_grad0_opsz24),
-                                contentDescription = "Edit",
-                                tint = Color.LightGray
-                            )
-                        },
-                        label = { Text("Edit", color = Color.LightGray) },
-                        selected = false
-                    )
+            bottomBar = {
+                NavigationBar (
+                    containerColor = darkGrey
+                ) {
+                    Row {
+                        NavigationBarItem(
+                            onClick = { navController.navigate("talkscreen") },
+                            modifier = Modifier.weight(1f),
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.partly_cloudy_night_24dp_5f6368_fill0_wght400_grad0_opsz24),
+                                    contentDescription = "Edit",
+                                    tint = Color.LightGray
+                                )
+                            },
+                            label = { Text("Edit", color = Color.LightGray) },
+                            selected = false
+                        )
 
 
-                    NavigationBarItem(
-                        onClick = { navController.navigate("archivescreen") },
-                        modifier = Modifier.weight(1f),
-                        icon = {
-                            // drawable フォルダにあるリソースを呼び出し
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_import_contacts_24),
-                                contentDescription = "MyARchive",
-                                tint = Color.LightGray
-                            )
-                        },
-                        label = { Text("MyARchive", color = Color.LightGray) },
-                        selected = false
-                    )
+                        NavigationBarItem(
+                            onClick = { navController.navigate("archivescreen") },
+                            modifier = Modifier.weight(1f),
+                            icon = {
+                                // drawable フォルダにあるリソースを呼び出し
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_import_contacts_24),
+                                    contentDescription = "MyARchive",
+                                    tint = Color.LightGray
+                                )
+                            },
+                            label = { Text("MyARchive", color = Color.LightGray) },
+                            selected = false
+                        )
+                    }
                 }
             }
-        },
-        containerColor = backgroundColor // Scaffoldの背景色を動的に変更
-    ) {paddingValues ->
-        Row (
-            modifier = Modifier
-                .fillMaxSize() // 画面全体を使う
-                .padding(top = 48.dp) // TopbarとRowの間に余白を追加（Topbarの高さ + 16dpの余白
-                .padding(paddingValues),
-            horizontalArrangement = Arrangement.SpaceBetween, // 横方向の中央揃え
-            verticalAlignment = Alignment.Top// 縦方向の中央揃え
-        ){
-            // TextとSwitchの配置を縦に
-            Text(
-                text = "いい夢モード",
-                modifier = Modifier.padding(bottom = 8.dp), // Switchとの間に少しスペースを作成
-                style = MaterialTheme.typography.headlineSmall// テキストスタイルを少し大きめに
-            )
-            Switch(
-                checked = isGoodDreamMode,
-                onCheckedChange = { enabled ->
-                    settingViewModel.toggleGoodDreamMode(enabled) // 状態を更新
-                },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = mediumPurple,
-                    uncheckedThumbColor = Color.Gray
+        ) {paddingValues ->
+            Row (
+                modifier = Modifier
+                    .fillMaxSize() // 画面全体を使う
+                    .padding(paddingValues)
+                    .background(darkPurple),
+                horizontalArrangement = Arrangement.SpaceBetween, // 横方向の中央揃え
+                verticalAlignment = Alignment.Top// 縦方向の中央揃え
+
+            ){
+                // TextとSwitchの配置を縦に
+                Text(
+                    text = "いい夢モード",
+                    modifier = Modifier.padding(bottom = 8.dp), // Switchとの間に少しスペースを作成
+                    style = MaterialTheme.typography.headlineSmall,// テキストスタイルを少し大きめに
+                    color = Color.LightGray
                 )
-            )
+                Switch(
+                    checked = isGoodDreamMode,
+                    onCheckedChange = { enabled ->
+                        settingViewModel.toggleGoodDreamMode(enabled) // 状態を更新
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = lightPurple,
+                        uncheckedThumbColor = Color.Gray
+                    )
+                )
+            }
         }
     }
 }
