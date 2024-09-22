@@ -44,7 +44,7 @@ fun ArchiveScreen(
                 title = {
                     Text(
                         "Archive",
-                        color = Color.White
+                        color = Color.LightGray
                     )
                 },
                 navigationIcon = {
@@ -54,7 +54,7 @@ fun ArchiveScreen(
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "SettingDrawer",
-                            tint = Color.White
+                            tint = Color.LightGray
                         )
                     }
                 },
@@ -72,12 +72,13 @@ fun ArchiveScreen(
                         onClick = { navController.navigate("talkscreen") },
                         modifier = Modifier.weight(1f),
                         icon = {
-                            Icon(imageVector = Icons.Default.Edit,
+                            Icon(
+                                painter = painterResource(id = R.drawable.partly_cloudy_night_24dp_5f6368_fill0_wght400_grad0_opsz24),
                                 contentDescription = "Edit",
-                                tint = Color.White
+                                tint = Color.LightGray
                             )
                         },
-                        label = { Text("Edit", color = Color.White) },
+                        label = { Text("Edit", color = Color.LightGray) },
                         selected = false
                     )
 
@@ -89,10 +90,10 @@ fun ArchiveScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_import_contacts_24),
                                 contentDescription = "MyARchive",
-                                tint = Color.White
+                                tint = Color.LightGray
                             )
                         },
-                        label = { Text("MyARchive", color = Color.White) },
+                        label = { Text("MyARchive", color = Color.LightGray) },
                         selected = false
                     )
 
