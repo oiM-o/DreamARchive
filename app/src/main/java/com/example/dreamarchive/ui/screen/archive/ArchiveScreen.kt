@@ -1,7 +1,10 @@
 package com.example.dreamarchive.ui.screen.archive
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -33,78 +36,93 @@ fun ArchiveScreen(
     navController: NavController
 ){
 
-    //紫系統のカラーを定義
-    val darkPurple = Color(0xFF6A1B9A)
+    //紫系統のカラーを定義g
+    val darkPurple = Color(0xE6030126)
     val lightPurple = Color(0xFFCE93D8)
     val mediumPurple = Color(0xFF8E24AA)
+    val lightGrey = Color(0xFFE0E0E0)
+    val mediumGrey = Color(0xD9201D3A)
+    val darkGrey = Color(0xFF211A3A)
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        "Archive",
-                        color = Color.LightGray
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { navController.navigate("settingscreen") }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "SettingDrawer",
-                            tint = Color.LightGray
+    Box( //全体の背景色を指定
+        modifier = Modifier
+            .fillMaxSize() // 画面全体を埋める
+            .background(darkPurple) // 背景色をdarkPurpleに設定
+    ){
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            "Archive",
+                            color = Color.LightGray
                         )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = darkPurple
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { navController.navigate("settingscreen") }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "SettingDrawer",
+                                tint = Color.LightGray
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = darkGrey
+                    )
                 )
-            )
-        },
-        bottomBar = {
-            NavigationBar (
-                containerColor = darkPurple
-            ) {
-                Row{
-                    NavigationBarItem(
-                        onClick = { navController.navigate("talkscreen") },
-                        modifier = Modifier.weight(1f),
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.partly_cloudy_night_24dp_5f6368_fill0_wght400_grad0_opsz24),
-                                contentDescription = "Edit",
-                                tint = Color.LightGray
-                            )
-                        },
-                        label = { Text("Edit", color = Color.LightGray) },
-                        selected = false
-                    )
+            },
+            bottomBar = {
+                NavigationBar (
+                    containerColor = darkPurple
+                ) {
+                    Row{
+                        NavigationBarItem(
+                            onClick = { navController.navigate("talkscreen") },
+                            modifier = Modifier.weight(1f),
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.partly_cloudy_night_24dp_5f6368_fill0_wght400_grad0_opsz24),
+                                    contentDescription = "Edit",
+                                    tint = Color.LightGray
+                                )
+                            },
+                            label = { Text("Edit", color = Color.LightGray) },
+                            selected = false
+                        )
 
-                    NavigationBarItem(
-                        onClick = { navController.navigate("archivescreen") },
-                        modifier = Modifier.weight(1f),
-                        icon = {
-                            // drawable フォルダにあるリソースを呼び出し
-                            Icon(
-                                painter = painterResource(id = R.drawable.baseline_import_contacts_24),
-                                contentDescription = "MyARchive",
-                                tint = Color.LightGray
-                            )
-                        },
-                        label = { Text("MyARchive", color = Color.LightGray) },
-                        selected = false
-                    )
+                        NavigationBarItem(
+                            onClick = { navController.navigate("archivescreen") },
+                            modifier = Modifier.weight(1f),
+                            icon = {
+                                // drawable フォルダにあるリソースを呼び出し
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_import_contacts_24),
+                                    contentDescription = "MyARchive",
+                                    tint = Color.LightGray
+                                )
+                            },
+                            label = { Text("MyARchive", color = Color.LightGray) },
+                            selected = false
+                        )
 
+                    }
                 }
+            },
+        ) {paddingValues ->
+            Column (
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()//Columnも画面全体に埋める
+                    .background(darkPurple)
+            ){
+                Text(
+                    text = "This is the archive screen.",
+                    color = Color.LightGray
+                )
             }
-        },
-    ) {paddingValues ->
-        Column (
-            modifier = Modifier.padding(paddingValues)
-        ){
-            Text(text = "This is the archive screen.")
         }
     }
 }

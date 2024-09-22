@@ -101,12 +101,14 @@ fun TalkScreen(
 
     val messages by talkViewModel.messages.collectAsState()
     var inputText by remember { mutableStateOf("") }
-    //紫系統のカラーを定義
-    val darkPurple = Color(0xE623054B)
+
+    //紫系統のカラーを定義g
+    val darkPurple = Color(0xE6030126)
     val lightPurple = Color(0xFFCE93D8)
     val mediumPurple = Color(0xFF8E24AA)
     val lightGrey = Color(0xFFE0E0E0)
-    val mediumGrey = Color(0xD9373364)
+    val mediumGrey = Color(0xD9201D3A)
+    val darkGrey = Color(0xFF211A3A)
 
     //キーボードを閉じるためのFocusManagerを取得
     val focusManager = LocalFocusManager.current
@@ -152,7 +154,7 @@ fun TalkScreen(
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = mediumGrey
+                    containerColor = darkGrey
                 )
             )
         },
@@ -177,7 +179,7 @@ fun TalkScreen(
                             Icon(
                                 imageVector = Icons.Default.Send,
                                 contentDescription = "send_message_to_GPT",
-                                tint = darkPurple
+                                tint = mediumPurple
                             )
                         }
                     },
