@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -29,6 +31,9 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -40,6 +45,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -57,6 +63,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -66,14 +73,18 @@ import androidx.navigation.compose.rememberNavController
 import com.example.dreamarchive.ui.screen.setting.SettingViewModel
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.dreamarchive.MinimalDialog
 import com.example.dreamarchive.R
 import java.time.LocalDate
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +101,6 @@ fun TalkScreen(
 
     val messages by talkViewModel.messages.collectAsState()
     var inputText by remember { mutableStateOf("") }
-
     //紫系統のカラーを定義
     val darkPurple = Color(0xE623054B)
     val lightPurple = Color(0xFFCE93D8)
@@ -101,11 +111,23 @@ fun TalkScreen(
     //キーボードを閉じるためのFocusManagerを取得
     val focusManager = LocalFocusManager.current
 
+
     // Meshy APIの現在のステータスを監視
     val currentStatus by talkViewModel.currentStatus.collectAsState()
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
+
+    //popupの設定
+    // ダイアログ表示用の状態を追加
+    var showDialog by remember { mutableStateOf(true) }
+
+    // ダイアログの表示
+    if (showDialog) {
+        MinimalDialog1(onDismissRequest = {
+            showDialog = false
+        })
+    }
 
 
 
@@ -148,7 +170,6 @@ fun TalkScreen(
                             onClick = {
                                 talkViewModel.sendMessageToGpt(inputText)
                                 inputText = "" // 送信後にテキストフィールドをクリア
-
                                 //フォーカスを解除してキーボードを閉じる
                                 focusManager.clearFocus()
                             },
@@ -223,6 +244,8 @@ fun TalkScreen(
             .background(darkPurple)
             .imePadding(),// キーボード表示時のパディング調整
     )
+
+
     { innerpadding ->
         Column(
             modifier = Modifier
@@ -343,6 +366,18 @@ fun TalkScreen(
         }
     }
 }
+
+
+@Composable
+fun MinimalDialog1(onDismissRequest: () -> Unit) {
+    MinimalDialog(
+        onDismissRequest = onDismissRequest,
+        text = "今日はどんな夢をみましたか？\nその夢もう一度思い出してみて"
+    )
+}
+
+
+
 
 
 @Preview

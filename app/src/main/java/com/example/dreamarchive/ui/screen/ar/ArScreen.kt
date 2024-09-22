@@ -3,11 +3,18 @@ package com.example.dreamarchive.ui.screen.ar
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,9 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.dreamarchive.MinimalDialog
+
 import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
 import com.google.ar.core.Config
@@ -168,6 +179,15 @@ fun ARScreen(
             onSessionUpdated = onSessionUpdated,
             onGestureListener = onGestureListener
         )
+
+    //popupの設定
+    // ダイアログ表示用の状態を追加
+    var showDialog by remember { mutableStateOf(true) }
+
+    // ダイアログの表示
+    if (showDialog) {
+        MinimalDialog2(onDismissRequest = { showDialog = false })
+    }
 }
 
 // 仮の関数：ARSceneからBitmapを取得する方法は使用しているライブラリによります
@@ -202,3 +222,12 @@ fun createAnchorNode(
     anchorNode.addChildNode(modelNode)
     return anchorNode
 }
+
+@Composable
+fun MinimalDialog2(onDismissRequest: () -> Unit) {
+    MinimalDialog(
+        onDismissRequest = onDismissRequest,
+        text = "あなたの夢の記憶が現れました!\n現実と重ね合わせてみましょう！"
+    )
+}
+
