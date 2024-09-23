@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -256,9 +257,14 @@ fun TalkScreen(
                 .background(darkPurple)
         ) {
             LazyColumn(
-                contentPadding = innerpadding,
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 32.dp,
+                    bottom = 8.dp
+                ),
                 modifier = Modifier
-                    .weight(1f)//画面の残りの領域を使用
+                    .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
 
             ) {
@@ -361,7 +367,7 @@ fun TalkScreen(
                     LottieAnimation(
                         composition = composition,
                         progress = progress,
-                        modifier = Modifier.size(150.dp)
+                        modifier = Modifier.size(240.dp)
                     )
                 }
             }
@@ -369,18 +375,14 @@ fun TalkScreen(
     }
 }
 
-
 @Composable
 fun MinimalDialog1(onDismissRequest: () -> Unit) {
     MinimalDialog(
         onDismissRequest = onDismissRequest,
-        text = "今日はどんな夢をみましたか？\nその夢もう一度思い出してみて"
+        text = "今日はどんな夢をみましたか？\nその夢、もう一度思い出してみて",
+        animationRes = R.raw.thinking_man_animation
     )
 }
-
-
-
-
 
 @Preview
 @Composable

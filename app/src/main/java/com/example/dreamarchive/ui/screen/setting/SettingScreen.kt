@@ -137,21 +137,28 @@ fun SettingScreen(
         ) {paddingValues ->
             Row (
                 modifier = Modifier
-                    .fillMaxSize() // 画面全体を使う
+                    .fillMaxSize()
                     .padding(paddingValues)
                     .background(darkPurple),
-                horizontalArrangement = Arrangement.SpaceBetween, // 横方向の中央揃え
-                verticalAlignment = Alignment.Top// 縦方向の中央揃え
-
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
             ){
-                // TextとSwitchの配置を縦に
                 Text(
                     text = "いい夢モード",
-                    modifier = Modifier.padding(bottom = 8.dp), // Switchとの間に少しスペースを作成
-                    style = MaterialTheme.typography.headlineSmall,// テキストスタイルを少し大きめに
+                    modifier = Modifier.padding(
+                        top = 27.dp,
+                        start = 32.dp,
+                        end = 16.dp
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
                     color = Color.LightGray
                 )
                 Switch(
+                    modifier = Modifier.padding(
+                        top = 16.dp,
+                        start = 16.dp,
+                        end = 24.dp
+                    ),
                     checked = isGoodDreamMode,
                     onCheckedChange = { enabled ->
                         settingViewModel.toggleGoodDreamMode(enabled) // 状態を更新

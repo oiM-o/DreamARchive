@@ -32,6 +32,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.dreamarchive.MinimalDialog
+import com.example.dreamarchive.R
 
 import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
@@ -227,7 +228,8 @@ fun createAnchorNode(
 fun MinimalDialog2(onDismissRequest: () -> Unit) {
     MinimalDialog(
         onDismissRequest = onDismissRequest,
-        text = "あなたの夢の記憶が現れました!\n現実と重ね合わせてみましょう！"
+        text = "あなたの夢の記憶が現れました!\n現実と重ね合わせてみましょう！",
+        animationRes = R.raw.rocket_animation
     )
 }
 
